@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vue Basics</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://unpkg.com/vue@next" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <h1>Battle Bot</h1>
+    </header>
+    <div id="game">
+      <section id="monster" class="container">
+        <div class="monster__card">
+          <h2>🤖 Battle Bot</h2>
+          <span>{{ monsterHealth }}/100</span>
+        </div>
+        <div class="healthbar">
+          <div class="healthbar__value" :style="monsterBarStyles"></div>
+        </div>
+      </section>
+      <section id="player" class="container">
+        <div class="player__card">
+          <h2>You 👨‍💻</h2>
+          <span>{{ playerHealth }}/100</span>
+        </div>
+        <div class="healthbar--player">
+          <div class="healthbar__value" :style="playerBarStyles"></div>
+        </div>
+      </section>
+
+      <section class="container" v-if="winner">
+        <h3 v-if="winner === 'monster'" style="font-size: 30px;">Battle Bot wins 🤖</h3>
+        <h3 v-else-if="winner === 'player'" style="font-size: 30px;">🏆 You Won! 🏆</h3>
+        <button @click="restartGame">New Game</button>
+      </section>
+
+      <section id="controls" v-else>
+        <button @click="playerAttack">ATTACK</button>
+        <button :disabled="useSpecialAttack" @click="specialAttack">
+          SPECIAL
+        </button>
+        <button @click="playerHeal">HEAL</button>
+        <button @click="surrender">SURRENDER</button>
+      </section>
+      <section id="log" class="container">
+        <h2>Battle Log</h2>
+        <ul>
+          <span>
+            <span v-if="winner === 'monster'" class="log--damage"><b>You lost consciousness..</b> ✨</span>
+            <span v-else-if="winner === 'player'" class="log--heal"><b>...picked up 17¥</b></span>
+          </span>
+          <li v-for="logMessage in logMessages">
+            <span :class="{'log--player': logMessage.actionBy === 'player', 'log--monster': logMessage.actionBy === 'monster' }">{{ logMessage.actionBy ==='player' ? 'Player ' : 'Monster ' }}</span>
+            <span v-if="logMessage.actionType === 'heal'">
+              <span class="log--heal"> <b>heals</b></span> itself for
+              <span class="log--heal"><b>{{ logMessage.actionValue }}</b></span> hp 💖
+            </span>
+            <span v-else-if="logMessage.actionType === 'special-attack'">
+              <span class="log--damage"> attacks</span> and deals
+              <span class="log--damage">{{ logMessage.actionValue }}</span> dmg 💫
+            </span>
+            <span v-else>
+              <span class="log--damage"> attacks</span> and deals
+              <span class="log--damage">{{ logMessage.actionValue }}</span> dmg ⚔️
+            </span>
+          </li>
+        </ul>
+      </section>
+    </div>
+  </body>
+</html>
